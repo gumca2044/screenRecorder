@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
 
 app.get('/', function (req, res) {
 	// res.send('Hello World');
-	res.sendFile(__dirname + "/login.html");
+	res.sendFile(__dirname + "/index.html");
 })
 
 app.post('/auth', function(request, response) {
@@ -63,7 +63,7 @@ app.post('/authreg', function(request, response) {
 		   connection.query('INSERT INTO u_passwords(user_id,u_password) VALUES ((SELECT user_id FROM users WHERE email = ?),?)', [mail,password], function(err, rows) {
 			   if(err) throw err
 		   else
-			   response.redirect('/login.html');
+			   response.redirect('/index.html');
 		   });
 	   }
 	});
