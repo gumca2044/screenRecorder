@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    	body{
+    	text-align:center;
+    	background-color:blueviolet;
+    	}
+    	.container{
+		background-color:white;
+    		height: 200px;
+    		width: 500px;
+    		border: 2px solid black;
+    		margin-right: auto;
+    		margin-left: auto;
+    		padding: 100px;
+    	}
+    	#click:hover{
+   		background-color:blueviolet;
+    	}
+    	.lgout{
+    	float:right;
+    	top:0;
+		width: 4vw;
+    	}
+		.lgout:hover{
+			background-color:white;
+	    }
+
+    	h1{
+    	color:white;
+    	}
+
+    </style>
+
+</head>
+<body>
+	<a href="./login.html"><img class="lgout" src="Images\logout.png" title="Log Out"/></a><br>
+	<h1>SCREEN RECORDER</h1>
+
+ <div class="container">
+	    <h4>Audio Selection</h4><br>
+	    <input type="radio" name="sound" onclick ="audible(true)" value="true">ON
+	    <input type="radio" name="sound" onclick ="audible(false)" value="false">OFF
+	    <br> <br>
+            <input type="image"  id ="click" src="Images\Record.jpg" alt="Start" width="90" height="90" >
+
+</div>
+
+
+<!-- SCRIPT ONLY YOU CAN COPY -->
+<script>
+  var start = document.getElementById("click"),  click = 0,sound=false ; //dont forget to change id here
+
+  function audible(signal){
+ 	 sound=signal;
+  }
+
+
+  start.addEventListener('click', async function(){
+
+  if(click==0){
+    start.style.backgroundColor="green";
+  let stream = await recordScreen();
+  let mimeType = 'video/webm';
+  mediaRecorder = createRecorder(stream, mimeType);
+  let node = document.createElement("p");
+  //node.textContent = "Started recording";//comment this line if not req
+  document.body.appendChild(node);
+
+  click=1;
+
+  }
+  })
+
+
+  start.addEventListener('click', function(){
+
+  if(click==1){
+  start.style.backgroundColor="";
+  mediaRecorder.stop();
+  let node = document.createElement("p");
+  //node.textContent = "Stopped recording"; //comment this line if not req
+  document.body.appendChild(node);
+
+  click=0;
+  /**HERERERE**/
+  }
+  })
+
+
+  async function recordScreen() {
+	  //return await navigator.mediaDevices.getDisplayMedia({
+	  //video: { mediaSource: "screen"},
+	  return await navigator.mediaDevices.getUserMedia({
+	  	  video: { mediaSource: "screen"},
+		  audio: sound
+	  });
+  }
+
+  function createRecorder (stream, mimeType) {
+	  // the stream data is stored in this array
+	  let recordedChunks = [];
+	  let combined = new MediaStream([...stream.getTracks()]);
+	  const mediaRecorder = new MediaRecorder(combined);
+	  mediaRecorder.ondataavailable = function (e) {
+	  if (e.data.size > 0) {
+	  recordedChunks.push(e.data);
+ 	 }
+  };
+
+
+  mediaRecorder.onstop = function () {
+  saveFile(recordedChunks);
+  recordedChunks = [];
+  };
+
+  mediaRecorder.start(200); // For every 200ms the stream data will be stored in a separate chunk.
+  return mediaRecorder;
+  }
+
+  function saveFile(recordedChunks){
+  const blob = new Blob(recordedChunks, {
+  type: 'video/webm'
+  });
+  let filename = window.prompt('Enter file name'),
+  downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = `${filename}.webm`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  URL.revokeObjectURL(blob); // clear from memory
+  document.body.removeChild(downloadLink);
+
+  }
+
+
+
+</script>
+</body>
+</html>
