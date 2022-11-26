@@ -1,4 +1,7 @@
 {
+	"name": "guscreenrecorder",
+	"main": "main.js",
+	
   "dependencies": {
     "crypto-js": "^4.1.1",
     "express": "^4.18.1",
